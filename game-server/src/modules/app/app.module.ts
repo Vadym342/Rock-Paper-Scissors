@@ -22,10 +22,6 @@ import { AppService } from './app.service';
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude({ path: 'user', method: RequestMethod.POST })
-      .exclude('guest/(.*)')
-      .forRoutes(UserController);
+    consumer.apply(AuthMiddleware).exclude({ path: 'user', method: RequestMethod.POST }, 'guest/(.*)').forRoutes(UserController);
   }
 }

@@ -1,4 +1,5 @@
 import { axiosConfig } from "../api/axios.config";
+import { ErrorContextType } from "../types/common.types";
 import {
   LoginUserDatatype,
   UserDataType,
@@ -6,16 +7,24 @@ import {
 } from "../types/user.types";
 
 export const AuthService = {
-  async registration(userData: UserDataType): Promise<number> {
-    const data = await axiosConfig.post<number>("user", userData);
+  async registration(userData: UserDataType) {
+    const { data } = await axiosConfig
+      .post<number | ErrorContextType>("user", userData)
+      .catch((error) => {
+        return error.response.data;
+      });
 
-    return data.status;
+    return data;
   },
-  async login(userData: LoginUserDatatype): Promise<UserSystemDataType> {
-    const { data } = await axiosConfig.post<UserSystemDataType>(
-      "auth/login",
-      userData
-    );
+  async login(userData: LoginUserDatatype) {
+    const data = await axiosConfig
+      .post<UserSystemDataType | ErrorContextType>("auth/login", userData)
+      .catch((error) => {
+        return error.response.data;
+      });
+
+    console.log(data);
+
     return data;
   },
   async isAuthorizedUser(): Promise<UserSystemDataType | undefined> {
